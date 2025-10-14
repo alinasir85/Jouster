@@ -20,6 +20,9 @@ RUN python -c "import nltk; nltk.download('punkt_tab'); nltk.download('averaged_
 # Copy application code
 COPY . .
 
+# Ensure static files are included
+RUN mkdir -p app/static
+
 # Expose port
 EXPOSE 8000
 

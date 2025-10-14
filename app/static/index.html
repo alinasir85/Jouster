@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>LLM Knowledge Extractor</title>
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📚 LLM Knowledge Extractor</h1>
+        <p>Analyze text to extract summaries, topics, and keywords</p>
+    </header>
+
+    <main>
+        <!-- Text Analysis Section -->
+        <section class="analyze-section">
+            <h2>Analyze Text</h2>
+            <textarea
+                    id="textInput"
+                    placeholder="Paste or type your text here..."
+                    rows="8"
+            ></textarea>
+            <button class="btn btn-primary" id="analyzeBtn">Analyze Text</button>
+
+            <div class="result-container hidden" id="currentResult">
+                <h3>Analysis Result</h3>
+                <div class="result-content"></div>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2>Search Analyses</h2>
+            <div class="search-bar">
+                <input
+                        id="searchInput"
+                        placeholder="Search by topic or keyword..."
+                        type="text"
+                >
+                <button class="btn btn-secondary" id="searchBtn">Search</button>
+            </div>
+            <div class="results-list hidden" id="searchResults"></div>
+        </section>
+
+        <!-- Recent Analyses Section -->
+        <section class="recent-section">
+            <h2>Recent Analyses</h2>
+            <button class="btn btn-secondary" id="loadRecentBtn">Load Recent</button>
+            <div class="results-list hidden" id="recentAnalyses"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built with FastAPI and OpenAI</p>
+    </footer>
+</div>
+
+<!-- Loading Spinner -->
+<div class="loading-spinner hidden" id="loadingSpinner">
+    <div class="spinner"></div>
+</div>
+
+<!-- Error Toast -->
+<div class="error-toast hidden" id="errorToast">
+    <span class="error-message"></span>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

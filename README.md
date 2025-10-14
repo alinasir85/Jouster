@@ -3,6 +3,13 @@
 A prototype text analysis API that processes unstructured text using LLMs to generate summaries and extract structured
 metadata.
 
+## 📸 Screenshots
+
+### Web Interface
+
+![LLM Knowledge Extractor UI](./docs/screenshot-ui.png)
+*Clean, modern interface for text analysis with real-time results*
+
 ## Setup Instructions
 
 1. **Install dependencies**:
@@ -25,7 +32,9 @@ metadata.
    ```bash
    python main.py
    ```
-   The API will be available at `http://localhost:8000`
+    - Web UI: `http://localhost:8000`
+    - API Documentation: `http://localhost:8000/docs`
+    - API Info: `http://localhost:8000/api`
 
 ## API Endpoints
 
@@ -41,6 +50,21 @@ metadata.
   curl "http://localhost:8000/search?topic=technology"
   ```
 
+## Features
+
+### Web UI
+
+- **Text Analysis**: Submit text through a clean, modern interface
+- **Search**: Search through past analyses by topic or keyword
+- **Browse**: View recent analyses with full metadata
+- **Responsive**: Works on desktop and mobile devices
+
+### API
+
+- RESTful endpoints with automatic documentation
+- JSON request/response format
+- Comprehensive error handling
+
 ## Project Structure
 
 ```
@@ -49,6 +73,7 @@ app/
 ├── database/     # Database models and connection
 ├── schemas/      # Pydantic models for request/response
 ├── services/     # Business logic (LLM, text processing)
+├── static/       # Web UI assets (HTML, CSS, JS)
 └── main.py       # FastAPI application setup
 
 data/            # Database files (gitignored)

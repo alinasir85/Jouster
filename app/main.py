@@ -1,9 +1,11 @@
 import logging
+import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from .api import router
 from .database import engine, Base
@@ -34,19 +36,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files
+static_files_path = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_files_path), name="static")
+
 # Include API routes
 app.include_router(router)
 
 
-@app.get("/")
-def read_root():
-    """Root endpoint with API information."""
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    """Serve the web UI."""
+    html_path = os.path.join(static_files_path, "index.html")
+    with open(html_path, "r") as f:
+        return HTMLResponse(content=f.read())
+
+
+@app.get("/api")
+def api_info():
+    """API information endpoint."""
     return {
         "message": "Welcome to LLM Knowledge Extractor API",
         "endpoints": {
             "POST /analyze": "Process new text and return analysis",
-            "GET /search?topic={topic}": "Search analyses by topic or keyword"
-        }
+            "GET /search?topic={topic}": "Search analyses by topic or keyword",
+            "GET /analyses": "Get all analyses with pagination",
+            "GET /analysis/{id}": "Get specific analysis by ID"
+        },
+        "web_ui": "Visit / for the web interface"
     }
 
 
