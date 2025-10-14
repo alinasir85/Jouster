@@ -1,6 +1,6 @@
 import os
 import sys
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -50,8 +50,15 @@ class TestAPI:
     """Test suite for the LLM Knowledge Extractor API."""
 
     def test_root_endpoint(self):
-        """Test the root endpoint returns API information."""
+        """Test the root endpoint returns HTML for web UI."""
         response = client.get("/")
+        assert response.status_code == 200
+        assert "text/html" in response.headers["content-type"]
+        assert "LLM Knowledge Extractor" in response.text
+
+    def test_api_endpoint(self):
+        """Test the /api endpoint returns API information."""
+        response = client.get("/api")
         assert response.status_code == 200
         data = response.json()
         assert "message" in data
@@ -65,11 +72,15 @@ class TestAPI:
         response = client.post("/analyze", json={"text": "   "})
         assert response.status_code == 422
 
-    @patch('app.api.routes.llm_service.analyze_text')
-    def test_analyze_success(self, mock_llm):
+    @patch('app.api.routes.get_llm_service')
+    def test_analyze_success(self, mock_get_llm_service):
         """Test successful text analysis."""
+        # Mock LLM service
+        mock_llm = MagicMock()
+        mock_get_llm_service.return_value = mock_llm
+        
         # Mock LLM response
-        mock_llm.return_value = {
+        mock_llm.analyze_text.return_value = {
             "summary": "AI is transforming technology through machine learning.",
             "title": "AI and Machine Learning",
             "topics": ["artificial intelligence", "machine learning", "technology"],
@@ -87,11 +98,13 @@ class TestAPI:
         assert len(data["keywords"]) == 3
         assert data["confidence_score"] is not None
 
-    @patch('app.api.routes.llm_service.analyze_text')
-    def test_analyze_llm_failure(self, mock_llm):
+    @patch('app.api.routes.get_llm_service')
+    def test_analyze_llm_failure(self, mock_get_llm_service):
         """Test graceful handling of LLM API failure."""
-        # Mock LLM failure
-        mock_llm.side_effect = Exception("API Error")
+        # Mock LLM service to raise exception
+        mock_llm = MagicMock()
+        mock_get_llm_service.return_value = mock_llm
+        mock_llm.analyze_text.side_effect = Exception("API Error")
 
         response = client.post("/analyze", json={"text": SAMPLE_TEXT})
         assert response.status_code == 200
@@ -101,11 +114,15 @@ class TestAPI:
         assert data["sentiment"] == "neutral"
         assert data["topics"] == ["error", "processing", "failed"]
 
-    @patch('app.api.routes.llm_service.analyze_text')
-    def test_search_functionality(self, mock_llm):
+    @patch('app.api.routes.get_llm_service')
+    def test_search_functionality(self, mock_get_llm_service):
         """Test search endpoint functionality."""
+        # Mock LLM service
+        mock_llm = MagicMock()
+        mock_get_llm_service.return_value = mock_llm
+        
         # First, create an analysis
-        mock_llm.return_value = {
+        mock_llm.analyze_text.return_value = {
             "summary": "Python is a versatile programming language.",
             "title": "Python Programming",
             "topics": ["python", "programming", "development"],
@@ -148,8 +165,10 @@ class TestAPI:
     def test_get_analysis_by_id(self):
         """Test retrieving a specific analysis by ID."""
         # First create an analysis
-        with patch('app.api.routes.llm_service.analyze_text') as mock_llm:
-            mock_llm.return_value = {
+        with patch('app.api.routes.get_llm_service') as mock_get_llm_service:
+            mock_llm = MagicMock()
+            mock_get_llm_service.return_value = mock_llm
+            mock_llm.analyze_text.return_value = {
                 "summary": "Test summary",
                 "title": "Test",
                 "topics": ["test", "example", "demo"],

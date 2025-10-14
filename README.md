@@ -3,8 +3,6 @@
 A prototype text analysis API that processes unstructured text using LLMs to generate summaries and extract structured
 metadata.
 
-## 📸 Screenshots
-
 ### Web Interface
 
 ![LLM Knowledge Extractor UI](./docs/screenshot-ui.png)
@@ -96,6 +94,12 @@ scripts/         # Utility scripts
 ## Trade-offs Due to Time Constraints
 
 - **Simple keyword extraction**: Used basic frequency counting rather than TF-IDF or more sophisticated NLP techniques.
+- **No vector embeddings**: Could implement semantic search using embeddings (OpenAI, sentence-transformers) for better
+  search relevance and similarity matching.
+- **Basic JSON parsing**: No structured output validation or retry logic. Could use OpenAI's function calling or
+  implement LLM-as-judge pattern to ensure reliable structured data extraction.
+- **No data quality validation**: Could add an LLM judge to verify summary quality, topic relevance, and sentiment
+  accuracy before storing.
 - **Basic error handling**: Focused on the two required edge cases rather than comprehensive error coverage.
 - **Minimal validation**: Added basic input validation but could expand with more robust schemas and constraints.
 
